@@ -1,25 +1,45 @@
 // Next.jsをインポート
-import { NextPage } from "next";
+import { GetServerSideProps, NextPage } from "next";
 // Reactをインポート
 import { useEffect, useState } from "react";
+import styles from "./index.module.css";
 
-const IndexPage: NextPage = () => {
+// getServerSidePropsから渡されるpropsの型
+type Props ={
+    initialImageUrl:string;
+};
+
+const IndexPage: NextPage<Props> = ({initialImageUrl}) => {
     // useStateで状態を定義
-    const [imageUrl, setImageUrl] = useState("");
-    const [loading, setLoading] = useState(true);
+    const [imageUrl, setImageUrl] = useState(initialImageUrl); //初期値を渡す
+    const [loading, setLoading] = useState(false);
 
-    // マウント時に画像を読み込む宣言
-    useEffect(() => {
-        fetchImage().then((newImage) => {
-            // 画像URLの状態を更新する
-            setImageUrl(newImage.url);
-            // ローディング状態を更新する
-            setLoading(false);
-        });
-    }, []);
-    return <div>{loading || <img src={imageUrl} />}</div>
+    // ボタンクリックで画像を読み込む
+    const handleClick = async ()=>{
+        setLoading(true);
+        const newImage = await fetchImage();
+        setImageUrl(newImage.url);
+        setLoading(false);
+    };
+
+    // IndexPageの戻り値？
+    return (
+    <div className={styles.page}>
+        <button onClick={handleClick} className={styles.button}>他の猫も見る</button>
+        <div className={styles.frame}>{loading || <img src={imageUrl} className={styles.img}/>}</div>
+    </div>);
 };
 export default IndexPage;
+
+// サーバーサイドで実行する処理
+export const getServerSideProps: GetServerSideProps<Props> = async()=>{
+    const image = await fetchImage();
+    return {
+        props: {
+            initialImageUrl: image.url,
+        },
+    };
+};
 
 // imageに型をつける
 type Image = {
@@ -33,4 +53,5 @@ const fetchImage = async (): Promise<Image> => {
     return images[0];
 };
 
-// 次回、続きはここから: https://typescriptbook.jp/tutorials/nextjs#%E3%83%9C%E3%82%BF%E3%83%B3%E3%82%92%E3%82%AF%E3%83%AA%E3%83%83%E3%82%AF%E3%81%97%E3%81%9F%E3%81%A8%E3%81%8D%E3%81%AB%E7%94%BB%E5%83%8F%E3%81%8C%E6%9B%B4%E6%96%B0%E3%81%95%E3%82%8C%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%99%E3%82%8B
+// 猫ジェネレータ完成: https://typescriptbook.jp/tutorials/nextjs
+// 次回、続きはここから: https://typescriptbook.jp/tutorials/vercel-deploy
