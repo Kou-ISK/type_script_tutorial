@@ -54,4 +54,6 @@ const fetchImage = async (): Promise<Image> => {
 };
 
 // 猫ジェネレータ完成: https://typescriptbook.jp/tutorials/nextjs
-// 次回、続きはここから: https://typescriptbook.jp/tutorials/vercel-deploy
+// Vercelにデプロイ完了: https://typescriptbook.jp/tutorials/vercel-deploy
+// Jestでテスト作成完了: https://typescriptbook.jp/tutorials/jest
+// 次回はここから: https://typescriptbook.jp/tutorials/component-test
